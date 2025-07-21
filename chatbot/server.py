@@ -7,6 +7,7 @@ from sqlalchemy.orm import Session
 
 from .schemas import (
     PromptRequest, UserCreate, UserLogin, Token, 
+    Query, Message, PromptRequest, UserCreate, UserLogin, Token, 
     UserResponse, ChatResponse, ChatListResponse, AIResponseRequest, AIResponseResponse,
     SystemPromptResponse, SystemPromptUpdate
 )
