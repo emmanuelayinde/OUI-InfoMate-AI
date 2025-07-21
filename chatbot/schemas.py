@@ -41,12 +41,22 @@ class UserResponse(BaseModel):
     email: str
     first_name: Optional[str] = None
     last_name: Optional[str] = None
-    is_active: bool = True
+    user_type: str
+    is_active: bool
     token: Optional[Token] = None
     created_at: datetime
     
     class Config:
         from_attributes = True
+
+
+# System Prompt schemas
+class SystemPromptResponse(BaseModel):
+    prompt: str
+
+
+class SystemPromptUpdate(BaseModel):
+    prompt: str
 
 
 # Chat and Message schemas
