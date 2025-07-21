@@ -1,11 +1,10 @@
-from fastapi import FastAPI, Depends, HTTPException, status
-from fastapi.security import HTTPBearer
-from sqlalchemy.orm import Session
-from typing import List
-from datetime import timedelta
 import os
+from datetime import timedelta
 
-from .indexing import get_faq_index
+from fastapi import FastAPI, Depends, HTTPException, status
+from fastapi.middleware.cors import CORSMiddleware
+from sqlalchemy.orm import Session
+
 from .schemas import (
     Query, Message, PromptRequest, UserCreate, UserLogin, Token, 
     UserResponse, ChatResponse, ChatListResponse, AIResponseRequest, AIResponseResponse,
@@ -21,8 +20,17 @@ from .auth import (
 from .prompt_manager import prompt_manager
 from .admin_setup import create_default_admin
 
+
 # Initialize FastAPI app
 app = FastAPI(title="Chatbot API", version="1.0.0")
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins={"*"},
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 
 # Initialize FAQ index
 # index = get_faq_index()
@@ -80,7 +88,26 @@ async def register(user: UserCreate, db: Session = Depends(get_db)):
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
-    return db_user
+
+        
+    # Create access token
+    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = create_access_token(
+        data={"sub": user.username}, expires_delta=access_token_expires
+    )
+    token = Token(access_token=access_token, token_type="bearer")
+    new_user = {
+        "id": db_user.id,
+        "username": db_user.username,
+        "email": db_user.email,
+        "first_name": db_user.first_name,
+        "last_name": db_user.last_name,
+        "is_active": db_user.is_active,
+        "created_at": db_user.created_at,
+        "token": token
+    }
+
+    return UserResponse(**new_user)
 
 @app.post("/login", response_model=Token)
 async def login(user_credentials: UserLogin, db: Session = Depends(get_db)):
@@ -132,9 +159,24 @@ async def get_chats(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-    """Get all chats for the current user"""
-    chats = db.query(Chat).filter(Chat.user_id == current_user.id).all()
-    return ChatListResponse(chats=chats)
+    """Get all chats for the current user (id, title, created_at, updated_at only)"""
+    chats = db.query(
+        Chat.id,
+        Chat.title,
+        Chat.created_at,
+        Chat.updated_at
+    ).filter(Chat.user_id == current_user.id).all()
+    # Convert result to list of dicts or models as expected by ChatListResponse
+    chat_list = [
+        {
+            "id": chat.id,
+            "title": chat.title,
+            "created_at": chat.created_at,
+            "updated_at": chat.updated_at
+        }
+        for chat in chats
+    ]
+    return ChatListResponse(chats=chat_list)
 
 @app.get("/chats/{chat_id}", response_model=ChatResponse)
 async def get_chat(
@@ -153,8 +195,25 @@ async def get_chat(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Chat not found"
         )
-    
-    return chat
+
+    # Convert chat to ChatResponse model
+    chat_response = ChatResponse(
+        id=chat.id,
+        title=chat.title,
+        created_at=chat.created_at,
+        updated_at=chat.updated_at,
+        messages=[
+            {
+                "id": msg.id,
+                "role": msg.role,
+                "content": msg.content,
+                "created_at": msg.created_at,
+            }
+            for msg in chat.messages
+        ]
+    )
+
+    return chat_response
 
 # AI Response endpoint
 @app.post("/get_ai_response", response_model=AIResponseResponse)

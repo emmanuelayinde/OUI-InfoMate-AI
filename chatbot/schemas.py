@@ -43,6 +43,7 @@ class UserResponse(BaseModel):
     last_name: Optional[str] = None
     user_type: str
     is_active: bool
+    token: Optional[Token] = None
     created_at: datetime
     
     class Config:
@@ -72,9 +73,9 @@ class MessageResponse(BaseModel):
 class ChatResponse(BaseModel):
     id: int
     title: Optional[str]
+    messages: List[MessageResponse] = []
     created_at: datetime
     updated_at: datetime
-    messages: List[MessageResponse] = []
     
     class Config:
         from_attributes = True

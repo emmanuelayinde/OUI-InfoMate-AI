@@ -15,8 +15,9 @@ def create_faq_index(folder: Path = None, force: bool = False, raise_exception=F
     """Creates or overwrites the FAQ index from PDFs."""
     index_path = INDEXES_PATHS / FAQ_INDEX_NAME
 
-    not raise_exception or return_or_throw(index_path.exists() and not force ,
-                    FileExistsError(f"Index already exists at {index_path}. Use 'force=True' to overwrite."))
+    if raise_exception:
+        return_or_throw(not (index_path.exists() and not force),
+                        FileExistsError(f"Index already exists at {index_path}. Use 'force=True' to overwrite."))
 
     if index_path.exists() and not force:
         print(f"Index exists at {index_path}. Use 'force=True' to overwrite.")
