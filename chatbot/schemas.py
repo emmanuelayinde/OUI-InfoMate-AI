@@ -63,6 +63,7 @@ class MessageResponse(BaseModel):
 class ChatResponse(BaseModel):
     id: int
     title: Optional[str]
+    messages: List[MessageResponse] = []
     created_at: datetime
     updated_at: datetime
     

@@ -147,8 +147,25 @@ async def get_chat(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Chat not found"
         )
-    
-    return chat
+
+    # Convert chat to ChatResponse model
+    chat_response = ChatResponse(
+        id=chat.id,
+        title=chat.title,
+        created_at=chat.created_at,
+        updated_at=chat.updated_at,
+        messages=[
+            {
+                "id": msg.id,
+                "role": msg.role,
+                "content": msg.content,
+                "created_at": msg.created_at,
+            }
+            for msg in chat.messages
+        ]
+    )
+
+    return chat_response
 
 # AI Response endpoint
 @app.post("/get_ai_response", response_model=AIResponseResponse)
