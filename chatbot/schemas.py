@@ -34,6 +34,8 @@ class Token(BaseModel):
     access_token: str
     token_type: str
 
+class TokenWithUserType(Token):
+    user_type: str
 
 class UserResponse(BaseModel):
     id: int
@@ -41,12 +43,22 @@ class UserResponse(BaseModel):
     email: str
     first_name: Optional[str] = None
     last_name: Optional[str] = None
+    user_type: str
     is_active: bool = True
     token: Optional[Token] = None
     created_at: datetime
     
     class Config:
         from_attributes = True
+
+
+# System Prompt schemas
+class SystemPromptResponse(BaseModel):
+    prompt: str
+
+
+class SystemPromptUpdate(BaseModel):
+    prompt: str
 
 
 # Chat and Message schemas
