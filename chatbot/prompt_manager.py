@@ -1,6 +1,5 @@
 import os
-import json
-from typing import Optional
+
 
 class SystemPromptManager:
     def __init__(self, prompt_file: str = "system_prompt.txt"):
@@ -10,7 +9,7 @@ class SystemPromptManager:
     def get_prompt(self) -> str:
         """Get the current system prompt"""
         try:
-            with open(self.prompt_path, 'r') as file:
+            with open(self.prompt_path, 'r', encoding='utf-8') as file:
                 return file.read().strip()
         except FileNotFoundError:
             # Return default prompt if file doesn't exist
@@ -24,7 +23,7 @@ class SystemPromptManager:
             # Ensure the directory exists
             os.makedirs(os.path.dirname(self.prompt_path), exist_ok=True)
             
-            with open(self.prompt_path, 'w') as file:
+            with open(self.prompt_path, 'w', encoding='utf-8') as file:
                 file.write(prompt.strip())
             return True
         except Exception as e:

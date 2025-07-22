@@ -1,4 +1,3 @@
-import os
 from datetime import timedelta
 
 from fastapi import FastAPI, Depends, HTTPException, status
@@ -6,8 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 
 from .schemas import (
-    PromptRequest, UserCreate, UserLogin, Token, 
-    Query, Message, PromptRequest, UserCreate, UserLogin, Token, 
+    PromptRequest, UserCreate, UserLogin, Token, TokenWithUserType,
     UserResponse, ChatResponse, ChatListResponse, AIResponseRequest, AIResponseResponse,
     SystemPromptResponse, SystemPromptUpdate
 )
@@ -102,6 +100,7 @@ async def register(user: UserCreate, db: Session = Depends(get_db)):
         "email": db_user.email,
         "first_name": db_user.first_name,
         "last_name": db_user.last_name,
+        "user_type": db_user.user_type,
         "is_active": db_user.is_active,
         "created_at": db_user.created_at,
         "token": token
@@ -109,7 +108,7 @@ async def register(user: UserCreate, db: Session = Depends(get_db)):
 
     return UserResponse(**new_user)
 
-@app.post("/login", response_model=Token)
+@app.post("/login", response_model=TokenWithUserType)
 async def login(user_credentials: UserLogin, db: Session = Depends(get_db)):
     # Find user
     user = db.query(User).filter(User.username == user_credentials.username).first()
@@ -125,7 +124,7 @@ async def login(user_credentials: UserLogin, db: Session = Depends(get_db)):
     access_token = create_access_token(
         data={"sub": user.username}, expires_delta=access_token_expires
     )
-    return {"access_token": access_token, "token_type": "bearer"}
+    return {"access_token": access_token, "token_type": "bearer", "user_type": user.user_type}
 
 @app.get("/me", response_model=UserResponse)
 async def get_current_user_info(current_user: User = Depends(get_current_user)):
@@ -138,10 +137,11 @@ async def get_system_prompt(current_user: User = Depends(require_admin)):
     prompt = prompt_manager.get_prompt()
     return SystemPromptResponse(prompt=prompt)
 
+
 @app.put("/system-prompt", response_model=SystemPromptResponse)
 async def update_system_prompt(
     prompt_update: SystemPromptUpdate,
-    current_user: User = Depends(require_admin)
+    _: User = Depends(require_admin)
 ):
     """Update the system prompt (Admin only)"""
     success = prompt_manager.set_prompt(prompt_update.prompt)

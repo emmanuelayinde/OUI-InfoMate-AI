@@ -16,7 +16,7 @@ def create_default_admin():
     # Get admin details from environment variables
     admin_first_name = os.getenv("ADMIN_FIRST_NAME", "Admin")
     admin_last_name = os.getenv("ADMIN_LAST_NAME", "Officer")
-    admin_username = os.getenv("ADMIN_USERNAME", "admin_user")
+    admin_username = os.getenv("ADMIN_USERNAME", "admin")
     admin_email = os.getenv("ADMIN_EMAIL", "admin@oui.edu.ng")
     
     # Get password from environment
@@ -59,11 +59,6 @@ def create_default_admin():
         db.refresh(admin_user)
         
         print(f"✅ Admin user created successfully!")
-        print(f"   Username: {admin_username}")
-        print(f"   Email: {admin_email}")
-        print(f"   Name: {admin_first_name} {admin_last_name}")
-        print(f"   Password: {admin_password}")
-        print(f"   User Type: {admin_user.user_type}")
         
         return admin_user
         

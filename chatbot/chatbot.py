@@ -24,7 +24,7 @@ def send_prompt_to_openai(messages: list[dict], system_prompt_file: str = "syste
 
     # Read system prompt from file
     system_prompt_path = os.path.join(os.path.dirname(__file__), "..", system_prompt_file)
-    with open(system_prompt_path, 'r') as file:
+    with open(system_prompt_path, 'r', encoding='utf-8') as file:
         system_prompt = file.read().strip()
 
     # Convert messages to the format expected by langchain_openai

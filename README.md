@@ -1,254 +1,287 @@
-# Chatbot Application
+# 🤖 Rose AI Chatbot Backend
 
-Welcome to the Chatbot Application project, a complete AI-powered chatbot solution featuring a robust backend and multiple user interfaces. This project demonstrates the seamless integration of machine learning capabilities and user-friendly interfaces, making it an excellent addition to any portfolio.
+A sophisticated, production-ready chatbot backend built with FastAPI, featuring advanced user management, persistent chat history, and seamless OpenAI integration. This system provides a complete foundation for building intelligent conversational applications with robust authentication and administrative controls.
 
----
+## ✨ Key Features
 
-## **Overview**
+### 🔐 **Advanced Authentication & Authorization**
 
-This project consists of two main components and interfaces:
+- JWT-based authentication with secure token management
+- Role-based access control (Admin/Student user types)
+- Automatic default admin account creation
+- Password hashing with bcrypt for security
 
-1. **Backend (`Chatbot` folder):**
-   - Handles document indexing, query processing, and integration with the vector store for efficient responses
-   - Built with Python and includes utilities for handling PDFs, FAQs, and other document formats
-   - Integrates with OpenAI's ChatGPT for natural conversations
+### 💬 **Intelligent Chat Management**
 
-2. **User Interfaces:**
-   - **RAG-powered FAQ Interface:**
-     - Provides intelligent responses based on your document knowledge base
-     - Built with Dash, offering responsive design and real-time communication
-   - **ChatGPT Conversation Interface:**
-     - Simple and intuitive chat interface for direct interactions with ChatGPT
-     - Maintains conversation context for natural dialogue flow
-     - No RAG integration, perfect for general queries and conversations
+- Persistent chat sessions with SQLite database
+- Message history tracking and retrieval
+- Support for multiple concurrent conversations per user
+- Optimized message ordering and pagination
 
----
+### 🧠 **AI Integration**
 
-## **Features**
+- Seamless OpenAI API integration using LangChain
+- Configurable AI models (GPT-3.5-turbo, GPT-4, etc.)
+- Dynamic system prompt management (admin-only)
+- Context-aware conversations with message history
 
-### **Backend Features**
-- **Document Indexing**: Supports processing and indexing of documents (e.g., PDFs)
-- **FAQ Handling**: Efficient FAQ vector store for quick and accurate responses
-- **API Integration**: Serves as the foundation for seamless communication with the frontends
-- **Modular Design**: Configurable settings using `config.py` and `.env` files
-- **OpenAI Integration**: Direct integration with ChatGPT for natural language processing
+### 📚 **Document Processing & Indexing**
 
-### **Frontend Features**
-- **Dual Interface Options**: Choose between RAG-powered FAQ bot or direct ChatGPT interactions
-- **Interactive UI**: Sleek and user-friendly interfaces for both chat modes
-- **Real-Time Interaction**: Facilitates real-time responses using state management tools
-- **Conversation History**: Maintains chat context for more natural interactions
-- **Error Handling**: Alerts users to invalid inputs or backend connection issues
+- LlamaIndex integration for document understanding
+- PDF processing capabilities
+- Vector storage for efficient document retrieval
+- FAQ index system for quick responses
 
----
+### 🛡️ **Production-Ready Features**
 
-## **Technologies Used**
+- Comprehensive error handling and logging
+- CORS middleware for cross-origin requests
+- Database schema validation and auto-migration
+- UTF-8 encoding support for multilingual content
+- RESTful API design with OpenAPI documentation
 
-- **Backend**:
-  - Python 3.12+
-  - FastAPI for API endpoints
-  - LlamaIndex for document indexing
-  - LangChain for AI interactions
-  - OpenAI's ChatGPT integration
+## 🏗️ Architecture Overview
 
-- **Frontend**:
-  - Dash Framework
-  - HTML/CSS for styling
-  - REST API integration
-  - Real-time state management
+```
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   Frontend UI   │────│   FastAPI API   │────│   OpenAI API    │
+│   (Dash/React)  │    │    Backend      │    │                 │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
+                                │
+                                │
+                       ┌─────────────────┐
+                       │   SQLite DB     │
+                       │ (Users, Chats,  │
+                       │   Messages)     │
+                       └─────────────────┘
+```
 
-- **Development Tools**:
-  - PowerShell automation
-  - Python virtual environments
-  - Environment variable management
+## 🚀 Quick Start
 
----
+### Prerequisites
 
-## **Quick Start (Windows)**
+- Python 3.11+
+- OpenAI API key
+- Git
 
-The easiest way to get started is using our PowerShell automation script:
+### Installation
 
-1. Clone the repository:
+1. **Clone the repository**
+
    ```bash
    git clone https://github.com/miracle5284/dash-fastapi-chatbot-llamaindex.git
-   cd dash-fastapi-chatbot-llamaindex
+   cd dash-fastapi-chatbot-llamaindex/backend
    ```
 
-2. Run the automation script:
-   ```powershell
-   Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
-   .\run_chatbot.ps1
-   ```
+2. **Create virtual environment**
 
-The script will automatically:
-- Check and install Python 3.12 if needed
-- Create and configure a virtual environment
-- Install all required dependencies
-- Prompt for your OpenAI API key
-- Set up environment variables
-- Start both the FastAPI server and Dash UI
-- Open your browser to the chat interface
-
-To stop the application:
-   - Press `Ctrl+C` in the terminal running the servers
-   - Both servers (FastAPI and Dash UI) will shut down gracefully
-
----
-
-## **Manual Setup**
-
-If you prefer manual setup or are using a different operating system:
-
-1. Install Python 3.12:
-   - Download Python 3.12 from [python.org](https://www.python.org/downloads/)
-   - Run the installer and make sure to check "Add Python to PATH"
-   - Verify installation by running:
-     ```bash
-     python --version
-     ```
-
-2. Create and activate a virtual environment:
    ```bash
-   # Create virtual environment
    python -m venv venv
-
-   # Activate virtual environment
-   # On Windows:
+   # Windows
    .\venv\Scripts\activate
-   # On macOS/Linux:
+   # Linux/Mac
    source venv/bin/activate
    ```
 
-3. Install dependencies:
+3. **Install dependencies**
+
    ```bash
    pip install -r requirements.txt
    ```
 
-4. Set up environment variables:
-   - Create a `.env` file with:
-     ```
-     OPENAI_API_KEY=your_api_key_here
-     OPENAI_MODEL_NAME=gpt-3.5-turbo
-     ```
+4. **Environment Configuration**
+   Create a `.env` file in the root directory:
 
-5. Start the servers:
-   ```bash
-   # Start FastAPI server
-   uvicorn chatbot.server:app --reload
-
-   # Start Dash UI (in another terminal)
-   python chatbot-ui/dash-chat-ui.py
-   ```
-
----
-
-## **Usage**
-
-1. Access the interfaces:
-   - For ChatGPT-only interface (no RAG):
-     ```
-     http://127.0.0.1:5500
-     ```
-   - For RAG-powered FAQ interface:
-     ```
-     http://127.0.0.1:8050
-     ```
-
-2. Choose your interaction mode:
-   - Use the FAQ interface (port 8050) for document-based queries
-   - Use the ChatGPT interface (port 5500) for general conversations
-
-3. Enter your queries and receive intelligent responses
-
-4. To stop the application:
-   - Press `Ctrl+C` on both terminal running the servers
-
-Note: The PowerShell automation script (`run_chatbot.ps1`) is configured to launch the ChatGPT-only interface by default. To use the RAG-powered FAQ interface, you'll need to run:
-```bash
-python chatbot/dash-ui.py
-```
-
----
-
-## **Folder Structure**
-
-```
-chatbot/
-├── chatbot/               # Backend code
-│   ├── config.py         # Configuration settings
-│   ├── server.py         # Main server script
-│   ├── indexing.py       # Document indexing utilities
-│   ├── schemas.py        # Data models
-│   ├── utils.py          # Helper functions
-│   └── documents/        # Input documents (e.g., PDFs)
-├── chatbot-ui/           # Frontend code
-│   ├── dash-chat-ui.py   # ChatGPT interface
-│   ├── styles.py         # UI styling
-│   └── config.py         # Frontend configuration
-├── run_chatbot.ps1       # Windows automation script
-├── .env                  # Environment variables
-├── README.md            # Project documentation
-└── requirements.txt     # Python dependencies
-```
-
----
-
-## **Screenshot**
-
-Below is an example of the Chatbot UI in action:
-
-![Chatbot UI Screenshot](assets/chatbot-ui.png)
-
----
-
-## **Configuration**
-
-The application can be configured through several files:
-
-1. **Environment Variables** (`.env` file):
-   ```
-   OPENAI_API_KEY=your_api_key_here
+   ```env
+   OPENAI_API_KEY=your_openai_api_key_here
    OPENAI_MODEL_NAME=gpt-3.5-turbo
+   SECRET_KEY=your_secret_key_for_jwt
+   DEFAULT_ADMIN_USERNAME=admin
+   DEFAULT_ADMIN_PASSWORD=your_admin_password
    ```
 
-2. **Server Configuration** (`chatbot-ui/config.py`):
-   - Configure server URLs, ports, and debug settings
-   - Settings for both FastAPI backend and Dash UI
+5. **Initialize the database**
 
-3. **System Prompt** (`system_prompt.txt`):
-   - Contains the instructions and behavior guidelines for the ChatGPT model
-   - Customize the model's personality and response style
-   - Modify the prompt to change how the chatbot interacts with users
-
----
-
-## **Contributing**
-
-We welcome contributions to enhance the functionality and design of this chatbot application! To contribute:
-
-1. Fork the repository.
-2. Create a new branch for your feature or bug fix:
    ```bash
-   git checkout -b feature-name
+   python -m chatbot.runserver
    ```
-3. Commit your changes and push to your fork:
+
+6. **Start the server**
+
    ```bash
-   git commit -m "Description of changes"
-   git push origin feature-name
+   # Using uvicorn directly
+   uvicorn chatbot.server:app --reload --host 0.0.0.0 --port 8000
+
+   # Or using the PowerShell script
+   .\run_chatbot.ps1
    ```
-4. Open a pull request on the main repository.
+
+The API will be available at `http://localhost:8000` with interactive documentation at `http://localhost:8000/docs`.
+
+## 📖 API Documentation
+
+### Authentication Endpoints
+
+- `POST /register` - Register new user (student role)
+- `POST /login` - User authentication
+- `GET /me` - Get current user information
+
+### Chat Management
+
+- `GET /chats` - List all user chats
+- `GET /chats/{chat_id}` - Get specific chat with messages
+- `POST /get_ai_response` - Send message and get AI response
+
+### Admin Features
+
+- `GET /system-prompt` - Get current system prompt (admin only)
+- `PUT /system-prompt` - Update system prompt (admin only)
+
+### Legacy Support
+
+- `POST /generate-response/` - Direct AI response generation
+
+For detailed API documentation with request/response schemas, visit `/docs` after starting the server.
+
+## 🗂️ Project Structure
+
+```
+backend/
+├── chatbot/                    # Main application package
+│   ├── __init__.py
+│   ├── server.py              # FastAPI application and routes
+│   ├── models.py              # SQLAlchemy database models
+│   ├── schemas.py             # Pydantic request/response models
+│   ├── database.py            # Database configuration and connection
+│   ├── auth.py                # Authentication and authorization
+│   ├── chatbot.py             # OpenAI integration logic
+│   ├── prompt_manager.py      # System prompt management
+│   ├── admin_setup.py         # Default admin creation
+│   ├── config.py              # Application configuration
+│   ├── utils.py               # Utility functions
+│   ├── indexing.py            # Document indexing with LlamaIndex
+│   └── documents/             # Document storage
+│       └── PDFs/              # PDF files for processing
+├── chatbot-ui/                # Frontend UI components
+├── requirements.txt           # Python dependencies
+├── run_chatbot.ps1           # Windows startup script
+├── system_prompt.txt         # Default AI system prompt
+├── test_api.py              # API testing script
+└── README.md                # This file
+```
+
+## 🔧 Configuration
+
+### Environment Variables
+
+| Variable                 | Description                     | Default         |
+| ------------------------ | ------------------------------- | --------------- |
+| `OPENAI_API_KEY`         | OpenAI API key for AI responses | Required        |
+| `OPENAI_MODEL_NAME`      | OpenAI model to use             | `gpt-3.5-turbo` |
+| `SECRET_KEY`             | JWT secret key                  | Required        |
+| `DEFAULT_ADMIN_USERNAME` | Default admin username          | `admin`         |
+| `DEFAULT_ADMIN_PASSWORD` | Default admin password          | Required        |
+
+### Database Configuration
+
+The application uses SQLite by default with the following features:
+
+- Automatic table creation on startup
+- Schema validation and migration
+- Connection pooling for performance
+- Foreign key constraints for data integrity
+
+## 🧪 Testing
+
+Run the included test script to verify API functionality:
+
+```bash
+python test_api.py
+```
+
+This will test:
+
+- User registration and authentication
+- Chat creation and message handling
+- AI response generation
+- Error handling scenarios
+
+## 🐳 Docker Deployment
+
+Create a `Dockerfile`:
+
+```dockerfile
+FROM python:3.11-slim
+
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install -r requirements.txt
+
+COPY . .
+EXPOSE 8000
+
+CMD ["uvicorn", "chatbot.server:app", "--host", "0.0.0.0", "--port", "8000"]
+```
+
+Build and run:
+
+```bash
+docker build -t rose-chatbot .
+docker run -p 8000:8000 --env-file .env rose-chatbot
+```
+
+## 🔒 Security Features
+
+- **Password Security**: Bcrypt hashing with salt
+- **JWT Tokens**: Secure authentication with expiration
+- **Input Validation**: Pydantic models for request validation
+- **SQL Injection Protection**: SQLAlchemy ORM with parameterized queries
+- **CORS Configuration**: Controlled cross-origin access
+- **Role-Based Access**: Admin/Student permission system
+
+## 📈 Performance Optimizations
+
+- **Database Indexing**: Optimized queries with proper indexes
+- **Connection Pooling**: Efficient database connection management
+- **Async Operations**: FastAPI async support for better concurrency
+- **Message Pagination**: Efficient chat history retrieval
+- **Caching**: LlamaIndex vector storage for fast document retrieval
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit changes (`git commit -m 'Add amazing feature'`)
+4. Push to branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## 📝 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🆘 Support & Troubleshooting
+
+### Common Issues
+
+**Unicode Decode Error**: Ensure all text files use UTF-8 encoding
+
+```bash
+# Check file encoding
+file -bi system_prompt.txt
+```
+
+**Database Connection Issues**: Verify SQLite permissions and file access
+
+**OpenAI API Errors**: Check API key validity and rate limits
+
+**Authentication Failures**: Verify JWT secret key configuration
+
+### Getting Help
+
+- Check the [API Documentation](API_DOCUMENTATION.md) for detailed endpoint information
+- Review the `/docs` endpoint for interactive API testing
+- Open an issue on GitHub for bug reports and feature requests
 
 ---
 
-## **License**
-
-This project is licensed under the MIT License. See the `LICENSE` file for details.
-
----
-
-## **Contact**
-
-For questions, feedback, or collaboration opportunities, feel free to reach out:
-
-- **Email**: miracle5284@users.noreply.github.com
-- **GitHub**: [Miracle Mayowa Adebunmi](https://github.com/miracle5284)
+**Built with ❤️ using FastAPI, LangChain, and LlamaIndex**

@@ -34,6 +34,8 @@ class Token(BaseModel):
     access_token: str
     token_type: str
 
+class TokenWithUserType(Token):
+    user_type: str
 
 class UserResponse(BaseModel):
     id: int
